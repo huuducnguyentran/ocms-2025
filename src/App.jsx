@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router";
 import Layout from "./components/Layout";
 import HomePage from "./page/HomePage";
 import ImportTraineePage from "./page/Trainee/ImportTraineePage";
+import VerifyCertificatePage from "./page/Certificate/PublicCertificatePage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="trainees-import" element={<ImportTraineePage />}/>
         </Route>
+        <Route path="verify" element={<VerifyCertificatePage />} />
       </Routes>
     </div>
   );
