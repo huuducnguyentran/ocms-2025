@@ -11,6 +11,7 @@ import LoginPage from "./page/Login/LoginPage";
 import ForgotPasswordPage from "./page/Login/ForgotPasswordPage";
 import ResetPasswordPage from "./page/Login/ResetPasswordPage";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+import ViewTraineePage from "./page/Trainee/ViewTraineePage";
 
 function App() {
   return (
@@ -35,8 +36,9 @@ function App() {
         <Route path="edit-profile" element={<EditProfilePage />} />  
         <Route path="change-password" element={<ChangePasswordPage />} />
         <Route path="trainees-import" element={<ImportTraineePage />} />
+        <Route path="trainees-view" element={<ViewTraineePage />} />
       </Route>
-      
+      {/* Redirect any unknown routes to login */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
