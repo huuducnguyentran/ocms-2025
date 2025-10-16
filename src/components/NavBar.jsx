@@ -79,15 +79,19 @@ const Navbar = () => {
   });
 
   return (
-    <Sider
-      theme="dark"
-      style={{
-        overflow: "hidden",
-        height: "auto",
-        backgroundColor: "#083344",
-        userSelect: "none",
-      }}
-    >
+   <Sider
+  theme="dark"
+  width={240}
+  style={{
+    overflow: "hidden",
+    height: "100vh",
+    position: "sticky",
+    top: 0,
+    left: 0,
+    backgroundColor: "#083344",
+    userSelect: "none",
+  }}
+>
       <div className="p-4 text-center border-b border-gray-600">
         <div className="text-2xl font-extrabold text-white tracking-wide">
           <span className="text-red-500">F</span>

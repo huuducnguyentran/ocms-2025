@@ -12,34 +12,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
-//   const handleLogin = async (values) => {
-//     setLoading(true);
-//     try {
-//       const response = await loginService.login(values.username, values.password);
-      
-//       // Save token to sessionStorage
-//       if (response.token) {
-//         sessionStorage.setItem('token', response.token);
-//         sessionStorage.setItem('username', values.username);
-        
-//         messageApi.success('Login successful!');
-        
-//         // Redirect to home page after successful login
-//         setTimeout(() => {
-//           navigate('/');
-//         }, 500);
-//       }
-//     } catch (error) {
-//       console.error('Login error:', error);
-//       const errorMessage = error.response?.data?.message || 
-//                           error.response?.data?.title || 
-//                           'Login failed. Please check your credentials.';
-//       messageApi.error(errorMessage);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
 const location = useLocation();  // Add this line
 
   const handleLogin = async (values) => {
@@ -69,11 +41,9 @@ const location = useLocation();  // Add this line
       setLoading(false);
     }
   };
-  const handleForgotPassword = () => {
-    messageApi.info('Forgot password feature will be implemented soon');
-    // You can navigate to forgot password page here
-    // navigate('/forgot-password');
-  };
+const handleForgotPassword = () => {
+  navigate('/forgot-password');  // Navigate to forgot password page
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600">
@@ -97,18 +67,18 @@ const location = useLocation();  // Add this line
               requiredMark={false}
             >
               <Form.Item
-                label={<span className="text-gray-700 font-medium">User ID</span>}
+                label={<span className="text-gray-700 font-medium">Username</span>}
                 name="username"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter your User ID',
+                    message: 'Please enter your Username',
                   },
                 ]}
               >
                 <Input
                   prefix={<UserOutlined className="text-gray-400" />}
-                  placeholder="Enter your User ID"
+                  placeholder="Enter your username"
                   size="large"
                   className="rounded-lg"
                 />
