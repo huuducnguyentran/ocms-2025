@@ -1,10 +1,10 @@
 // src/page/Login/LoginPage.jsx
-import { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router';
-import { loginService } from '../../service/loginServices';
-import { useLocation } from 'react-router';
+import { useState } from "react";
+import { Form, Input, Button, message } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
+import { loginService } from "../../service/loginServices";
+import { useLocation } from "react-router";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -12,65 +12,84 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
-//   const handleLogin = async (values) => {
-//     setLoading(true);
-//     try {
-//       const response = await loginService.login(values.username, values.password);
-      
-//       // Save token to sessionStorage
-//       if (response.token) {
-//         sessionStorage.setItem('token', response.token);
-//         sessionStorage.setItem('username', values.username);
-        
-//         messageApi.success('Login successful!');
-        
-//         // Redirect to home page after successful login
-//         setTimeout(() => {
-//           navigate('/');
-//         }, 500);
-//       }
-//     } catch (error) {
-//       console.error('Login error:', error);
-//       const errorMessage = error.response?.data?.message || 
-//                           error.response?.data?.title || 
-//                           'Login failed. Please check your credentials.';
-//       messageApi.error(errorMessage);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  //   const handleLogin = async (values) => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await loginService.login(values.username, values.password);
 
-const location = useLocation();  // Add this line
+  //       // Save token to sessionStorage
+  //       if (response.token) {
+  //         sessionStorage.setItem('token', response.token);
+  //         sessionStorage.setItem('username', values.username);
+
+  //         messageApi.success('Login successful!');
+
+  //         // Redirect to home page after successful login
+  //         setTimeout(() => {
+  //           navigate('/');
+  //         }, 500);
+  //       }
+  //     } catch (error) {
+  //       console.error('Login error:', error);
+  //       const errorMessage = error.response?.data?.message ||
+  //                           error.response?.data?.title ||
+  //                           'Login failed. Please check your credentials.';
+  //       messageApi.error(errorMessage);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  const location = useLocation(); // Add this line
 
   const handleLogin = async (values) => {
     setLoading(true);
     try {
-      const response = await loginService.login(values.username, values.password);
-      
+      const response = await loginService.login(
+        values.username,
+        values.password
+      );
+
       if (response.token) {
-        sessionStorage.setItem('token', response.token);
-        sessionStorage.setItem('username', values.username);
-        
-        messageApi.success('Login successful!');
-        
-        // Redirect to previous page or home
-        const from = location.state?.from?.pathname || '/';
+        // ✅ Save login data
+        sessionStorage.setItem("token", response.token);
+        sessionStorage.setItem("username", values.username);
+        sessionStorage.setItem("userId", response.userId);
+
+        // ✅ Save the first role from the "roles" array (if exists)
+        if (response.roles && response.roles.length > 0) {
+          sessionStorage.setItem("role", response.roles[0]);
+        }
+
+        // ✅ (Optional) save hub URL if needed later
+        if (response.hubUrl) {
+          sessionStorage.setItem("hubUrl", response.hubUrl);
+        }
+
+        messageApi.success("Login successful!");
+
+        // ✅ Redirect to previous page or home
+        const from = location.state?.from?.pathname || "/";
         setTimeout(() => {
           navigate(from, { replace: true });
         }, 500);
+      } else {
+        messageApi.error("Invalid login response from server.");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.title || 
-                          'Login failed. Please check your credentials.';
+      console.error("Login error:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.title ||
+        "Login failed. Please check your credentials.";
       messageApi.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
   const handleForgotPassword = () => {
-    messageApi.info('Forgot password feature will be implemented soon');
+    messageApi.info("Forgot password feature will be implemented soon");
     // You can navigate to forgot password page here
     // navigate('/forgot-password');
   };
@@ -97,12 +116,14 @@ const location = useLocation();  // Add this line
               requiredMark={false}
             >
               <Form.Item
-                label={<span className="text-gray-700 font-medium">User ID</span>}
+                label={
+                  <span className="text-gray-700 font-medium">User ID</span>
+                }
                 name="username"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter your User ID',
+                    message: "Please enter your User ID",
                   },
                 ]}
               >
@@ -115,12 +136,14 @@ const location = useLocation();  // Add this line
               </Form.Item>
 
               <Form.Item
-                label={<span className="text-gray-700 font-medium">Password</span>}
+                label={
+                  <span className="text-gray-700 font-medium">Password</span>
+                }
                 name="password"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter your password',
+                    message: "Please enter your password",
                   },
                 ]}
               >
@@ -162,12 +185,12 @@ const location = useLocation();  // Add this line
           {/* Decorative circles */}
           <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-          
+
           <div className="relative z-10 text-center text-white">
             <div className="mb-8 inline-flex items-center justify-center w-24 h-24 bg-white rounded-3xl shadow-xl">
               <span className="text-5xl font-bold text-indigo-600">VJ</span>
             </div>
-            
+
             <h2 className="text-5xl font-bold mb-4">VJ Academy</h2>
             <p className="text-xl text-white/90 italic">
               Dream - Learn - Achieve

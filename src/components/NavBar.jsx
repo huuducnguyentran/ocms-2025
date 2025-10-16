@@ -50,30 +50,30 @@ const iconMap = {
 
 export default function Navbar() {
   const location = useLocation();
+  const userId = sessionStorage.getItem("userId");
+  const role = sessionStorage.getItem("role");
 
-  const filteredNavItems = navItems.map((item) => {
-    if (item.children) {
+  const filteredNavItems = navItems
+    .filter((item) => !item.roles || item.roles.includes(role))
+    .map((item) => {
+      if (item.children) {
+        return {
+          ...item,
+          icon: iconMap[item.icon],
+          children: item.children
+            .filter((child) => !child.roles || child.roles.includes(role))
+            .map((child) => ({
+              key: child.key,
+              label: <Link to={child.path}>{child.label}</Link>,
+            })),
+        };
+      }
       return {
-        key: item.key,
+        ...item,
         icon: iconMap[item.icon],
-        label: item.label,
-        children: item.children.map((child) => ({
-          key: child.key,
-          label: <Link to={child.path}>{child.label}</Link>,
-        })),
+        label: <Link to={item.path}>{item.label}</Link>,
       };
-    }
-
-    return {
-      key: item.key,
-      icon: iconMap[item.icon],
-      label: (
-        <Link to={item.path} className="text-white hover:text-white">
-          {item.label}
-        </Link>
-      ),
-    };
-  });
+    });
 
   return (
     <Sider
@@ -128,7 +128,7 @@ export default function Navbar() {
               lineHeight: "16px",
             }}
           >
-            Subash
+            {userId || "User"} {/* ✅ Show UserID from sessionStorage */}
           </div>
           <div
             style={{
@@ -137,14 +137,22 @@ export default function Navbar() {
               lineHeight: "14px",
             }}
           >
-            Education Officer
+            {role || "Role not set"} {/* ✅ Show Role dynamically */}
           </div>
         </div>
+
         <Dropdown
           menu={{
             items: [
               { key: "1", label: "Profile" },
-              { key: "2", label: "Logout" },
+              {
+                key: "2",
+                label: "Logout",
+                onClick: () => {
+                  sessionStorage.clear();
+                  window.location.href = "/login";
+                },
+              },
             ],
           }}
           placement="bottomRight"

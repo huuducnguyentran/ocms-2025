@@ -1,19 +1,45 @@
-import React from "react";
-import { Table, Button, Tag, Dropdown, Menu } from "antd";
+import { useEffect, useState } from "react";
+import { Table, Button, Tag, Dropdown, Menu, message, Spin } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
+import { getAllTrainees } from "../../service/TraineeService";
 
 export default function ViewCandidatePage() {
-  const candidates = Array(10).fill({
-    id: "CND-001",
-    fullName: "Nguyen Van A",
-    gender: "Male",
-    email: "a@example.com",
-    address: "Hanoi, Vietnam",
-    traineeId: "TRN-001",
-    status: "Active",
-  });
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Dropdown Menu options
+  // Fetch trainees on mount
+  useEffect(() => {
+    const fetchTrainees = async () => {
+      setLoading(true);
+      try {
+        const res = await getAllTrainees();
+        if (res.success) {
+          // Map API response to table structure
+          const formatted = res.data.map((item, index) => ({
+            key: index,
+            id: item.userId,
+            fullName: item.fullName,
+            gender: item.sex,
+            email: item.email,
+            address: "-", // API doesn’t include address
+            traineeId: item.userId,
+            status: item.status,
+          }));
+          setCandidates(formatted);
+        } else {
+          message.error(res.message || "Failed to load trainees.");
+        }
+      } catch (err) {
+        console.error(err);
+        message.error("Error fetching trainees.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTrainees();
+  }, []);
+
+  // Dropdown Menu
   const menu = (
     <Menu
       items={[
@@ -30,7 +56,9 @@ export default function ViewCandidatePage() {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      render: (text) => <span className="text-[#6C63FF] font-medium">{text}</span>,
+      render: (text) => (
+        <span className="text-[#6C63FF] font-medium">{text}</span>
+      ),
     },
     {
       title: "Full Name",
@@ -61,19 +89,42 @@ export default function ViewCandidatePage() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => (
-        <Tag
-          color="#6C63FF"
-          style={{
-            borderRadius: "50px",
-            padding: "2px 12px",
-            color: "white",
-            fontWeight: "500",
-          }}
-        >
-          {status}
-        </Tag>
-      ),
+      render: (status) => {
+        let color = "";
+        switch (status) {
+          case "Active":
+            color = "green";
+            break;
+          case "Pending":
+            color = "red";
+            break;
+          case "Deactivated":
+          case "Inactivated":
+            color = "gray";
+            break;
+          default:
+            color = "#6C63FF";
+        }
+        return (
+          <Tag
+            style={{
+              borderRadius: "50px",
+              padding: "2px 12px",
+              fontWeight: "500",
+              color: "white",
+              backgroundColor:
+                status === "Active"
+                  ? "#52c41a" // Solid green
+                  : status === "Pending"
+                  ? "#ff4d4f" // Solid red
+                  : "#8c8c8c", // Solid gray
+              border: "none",
+            }}
+          >
+            {status}
+          </Tag>
+        );
+      },
     },
     {
       title: "Action",
@@ -81,16 +132,14 @@ export default function ViewCandidatePage() {
       align: "center",
       render: () => (
         <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-          <MoreOutlined
-            className="cursor-pointer text-[#6C63FF] text-lg hover:text-[#8C82FF]"
-          />
+          <MoreOutlined className="cursor-pointer text-[#6C63FF] text-lg hover:text-[#8C82FF]" />
         </Dropdown>
       ),
     },
   ];
 
   return (
-    <div className="p-8 bg-white min-h-screen">
+    <div className="p-8 w-full bg-white min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold text-[#6C63FF]">
@@ -113,20 +162,20 @@ export default function ViewCandidatePage() {
       {/* Table */}
       <div
         className="bg-[#FDFDFF] shadow-md rounded-md p-4"
-        style={{
-          borderRadius: "10px",
-        }}
+        style={{ borderRadius: "10px" }}
       >
-        <Table
-          columns={columns}
-          dataSource={candidates}
-          pagination={false}
-          bordered={false}
-          rowClassName={(_, index) =>
-            index % 2 === 0 ? "bg-[#F4F2FF]" : "bg-white"
-          }
-          scroll={{ y: 400 }}
-        />
+        <Spin spinning={loading}>
+          <Table
+            columns={columns}
+            dataSource={candidates}
+            pagination={false}
+            bordered={false}
+            rowClassName={(_, index) =>
+              index % 2 === 0 ? "bg-[#F4F2FF]" : "bg-white"
+            }
+            scroll={{ y: 400 }}
+          />
+        </Spin>
       </div>
 
       {/* Custom Scrollbar */}
