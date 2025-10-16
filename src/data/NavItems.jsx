@@ -19,14 +19,6 @@ const navItems = [
   { key: "5", label: "Instructor Assignment", icon: "BookOutlined", path: "/instructor-assignment" },
   { key: "23", label: "Classroom", icon: "FileProtectOutlined", path: "/class" },
 
-  // Scheduling & Attendance
-  {
-    key: "7",
-    label: "Schedule",
-    icon: "ScheduleOutlined",
-    path: "/schedule",
-    children: [{ key: "7-1", label: "All Schedule", path: "/schedule" }],
-  },
 
   // Assessment & Accomplishment
   { key: "9", label: "Accomplishments", icon: "FileDoneOutlined", path: "/accomplishments" },
