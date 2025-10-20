@@ -1,6 +1,11 @@
 const navItems = [
   { key: "1", label: "Home", icon: "HomeOutlined", path: "/home" },
-  { key: "2", label: "Notifications", icon: "BellOutlined", path: "/notifications" },
+  {
+    key: "2",
+    label: "Notifications",
+    icon: "BellOutlined",
+    path: "/notifications",
+  },
 
   // Learning Management
   { key: "3", label: "Specialty", icon: "ImportOutlined", path: "/specialty" },
@@ -11,17 +16,40 @@ const navItems = [
     path: "/course",
     children: [
       { key: "4-1", label: "All Courses", path: "/all-courses" },
-      { key: "4-2", label: "Trainee Courses", path: "/assigned-trainee-courses" },
+      {
+        key: "4-2",
+        label: "Trainee Courses",
+        path: "/assigned-trainee-courses",
+      },
     ],
   },
   { key: "6", label: "Subject", icon: "ReadOutlined", path: "/subject" },
-  { key: "24", label: "Subject Specialty", icon: "FileProtectOutlined", path: "/subject-specialty" },
-  { key: "5", label: "Instructor Assignment", icon: "BookOutlined", path: "/instructor-assignment" },
-  { key: "23", label: "Classroom", icon: "FileProtectOutlined", path: "/class" },
-
+  {
+    key: "24",
+    label: "Subject Specialty",
+    icon: "FileProtectOutlined",
+    path: "/subject-specialty",
+  },
+  {
+    key: "5",
+    label: "Instructor Assignment",
+    icon: "BookOutlined",
+    path: "/instructor-assignment",
+  },
+  {
+    key: "23",
+    label: "Classroom",
+    icon: "FileProtectOutlined",
+    path: "/class",
+  },
 
   // Assessment & Accomplishment
-  { key: "9", label: "Accomplishments", icon: "FileDoneOutlined", path: "/accomplishments" },
+  {
+    key: "9",
+    label: "Accomplishments",
+    icon: "FileDoneOutlined",
+    path: "/accomplishments",
+  },
   {
     key: "10",
     label: "Grade",
@@ -36,7 +64,12 @@ const navItems = [
 
   // Requests
   { key: "11", label: "Request", icon: "SelectOutlined", path: "/request" },
-  { key: "12", label: "Send Request", icon: "FileAddOutlined", path: "/send-request" },
+  {
+    key: "12",
+    label: "Send Request",
+    icon: "FileAddOutlined",
+    path: "/send-request",
+  },
 
   // Certification & Decisions
   {
@@ -45,12 +78,25 @@ const navItems = [
     icon: "FileProtectOutlined",
     path: "/certificate",
     children: [
-      { key: "13-1", label: "Certificate Pending", path: "/certificate-pending" },
+      {
+        key: "13-1",
+        label: "Certificate Pending",
+        path: "/certificate-pending",
+      },
       { key: "13-2", label: "Certificate Active", path: "/certificate-active" },
-      { key: "13-3", label: "Certificate Revoked", path: "/certificate-revoked" },
+      {
+        key: "13-3",
+        label: "Certificate Revoked",
+        path: "/certificate-revoked",
+      },
     ],
   },
-  { key: "14", label: "Certificate Template", icon: "FileProtectOutlined", path: "/certificate-template" },
+  {
+    key: "14",
+    label: "Certificate Template",
+    icon: "FileProtectOutlined",
+    path: "/certificate-template",
+  },
   {
     key: "15",
     label: "Decision",
@@ -61,7 +107,12 @@ const navItems = [
       { key: "15-2", label: "Decision Active", path: "/decision-active" },
     ],
   },
-  { key: "16", label: "Decision Template", icon: "FileProtectOutlined", path: "/decision-template" },
+  {
+    key: "16",
+    label: "Decision Template",
+    icon: "FileProtectOutlined",
+    path: "/decision-template",
+  },
 
   // Users & Roles
   {
@@ -84,14 +135,40 @@ const navItems = [
       { key: "18-2", label: "Import trainees", path: "/trainees-import" },
     ],
   },
-  { key: "19", label: "Trainee Assignment", icon: "DeploymentUnitOutlined", path: "/assigned-trainee" },
+  {
+    key: "19",
+    label: "Trainee Assignment",
+    icon: "DeploymentUnitOutlined",
+    path: "/assigned-trainee",
+  },
 
   // Organization Management
-  { key: "20", label: "Department", icon: "FileProtectOutlined", path: "/department" },
+  {
+    key: "20",
+    label: "Department",
+    icon: "FileProtectOutlined",
+    path: "/department",
+  },
 
   // System & Tools
-  { key: "21", label: "Regulations", icon: "FileProtectOutlined", path: "/regulations" },
-  { key: "22", label: "Reports", icon: "FileExcelOutlined", path: "/export-certificate" },
+  {
+    key: "21",
+    label: "Regulations",
+    icon: "FileProtectOutlined",
+    path: "/regulations",
+  },
+  {
+    key: "22",
+    label: "Reports",
+    icon: "FileExcelOutlined",
+    path: "/export-certificate",
+  },
+  {
+    key: "23",
+    label: "Plan",
+    icon: "FileExcelOutlined",
+    path: "/plan",
+  },
 ];
 
 export default navItems;
