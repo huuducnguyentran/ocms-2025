@@ -17,10 +17,10 @@ export const loginService = {
   },
 
   // Forgot password
-  forgotPassword: async (email) => {
+  forgotPassword: async (emailOrUsername) => {
     try {
       const response = await axiosInstance.post(AUTH_URLS.FORGOT_PASSWORD, {
-        email,
+        emailOrUsername,
       });
       return response.data;
     } catch (error) {
@@ -29,10 +29,10 @@ export const loginService = {
   },
 
   // Reset password
-  resetPassword: async (token, newPassword) => {
+  resetPassword: async (confirmPassword, newPassword) => {
     try {
       const response = await axiosInstance.post(AUTH_URLS.RESET_PASSWORD, {
-        token,
+        confirmPassword,
         newPassword,
       });
       return response.data;
