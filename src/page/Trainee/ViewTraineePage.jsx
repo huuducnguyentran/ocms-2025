@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Tag, Dropdown, Menu, message, Spin } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
 import { getAllTrainees } from "../../service/TraineeService";
 
 export default function ViewCandidatePage() {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Fetch trainees on mount
   useEffect(() => {
     const fetchTrainees = async () => {
       setLoading(true);
       try {
         const res = await getAllTrainees();
         if (res.success) {
-          // Map API response to table structure
           const formatted = res.data.map((item, index) => ({
             key: index,
             id: item.userId,
             fullName: item.fullName,
             gender: item.sex,
             email: item.email,
-            address: "-", // API doesn’t include address
+            address: "-",
             traineeId: item.userId,
             status: item.status,
           }));
@@ -39,16 +39,9 @@ export default function ViewCandidatePage() {
     fetchTrainees();
   }, []);
 
-  // Dropdown Menu
-  const menu = (
-    <Menu
-      items={[
-        { key: "1", label: "View Details" },
-        { key: "2", label: "Edit Candidate" },
-        { key: "3", label: "Remove Candidate" },
-      ]}
-    />
-  );
+  const handleViewDetail = (id) => {
+    navigate(`/trainee/${id}`);
+  };
 
   // Table Columns
   const columns = [
@@ -64,6 +57,14 @@ export default function ViewCandidatePage() {
       title: "Full Name",
       dataIndex: "fullName",
       key: "fullName",
+      render: (text, record) => (
+        <span
+          onClick={() => handleViewDetail(record.id)}
+          className="text-[#6C63FF] cursor-pointer hover:underline"
+        >
+          {text}
+        </span>
+      ),
     },
     {
       title: "Gender",
@@ -89,52 +90,53 @@ export default function ViewCandidatePage() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => {
-        let color = "";
-        switch (status) {
-          case "Active":
-            color = "green";
-            break;
-          case "Pending":
-            color = "red";
-            break;
-          case "Deactivated":
-          case "Inactivated":
-            color = "gray";
-            break;
-          default:
-            color = "#6C63FF";
-        }
-        return (
-          <Tag
-            style={{
-              borderRadius: "50px",
-              padding: "2px 12px",
-              fontWeight: "500",
-              color: "white",
-              backgroundColor:
-                status === "Active"
-                  ? "#52c41a" // Solid green
-                  : status === "Pending"
-                  ? "#ff4d4f" // Solid red
-                  : "#8c8c8c", // Solid gray
-              border: "none",
-            }}
-          >
-            {status}
-          </Tag>
-        );
-      },
+      render: (status) => (
+        <Tag
+          style={{
+            borderRadius: "50px",
+            padding: "2px 12px",
+            fontWeight: "500",
+            color: "white",
+            backgroundColor:
+              status === "Active"
+                ? "#52c41a"
+                : status === "Pending"
+                ? "#ff4d4f"
+                : "#8c8c8c",
+            border: "none",
+          }}
+        >
+          {status}
+        </Tag>
+      ),
     },
     {
       title: "Action",
       key: "action",
       align: "center",
-      render: () => (
-        <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-          <MoreOutlined className="cursor-pointer text-[#6C63FF] text-lg hover:text-[#8C82FF]" />
-        </Dropdown>
-      ),
+      render: (record) => {
+        const menu = (
+          <Menu
+            items={[
+              {
+                key: "1",
+                label: (
+                  <span onClick={() => handleViewDetail(record.id)}>
+                    View Details
+                  </span>
+                ),
+              },
+              { key: "2", label: "Edit Candidate" },
+              { key: "3", label: "Remove Candidate" },
+            ]}
+          />
+        );
+        return (
+          <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+            <MoreOutlined className="cursor-pointer text-[#6C63FF] text-lg hover:text-[#8C82FF]" />
+          </Dropdown>
+        );
+      },
     },
   ];
 
@@ -142,7 +144,7 @@ export default function ViewCandidatePage() {
     <div className="p-8 w-full bg-white min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-[#6C63FF]">
+        <h2 className="text-2xl font-semibold text-[#6C63FF]">
           Import Candidate
         </h2>
         <Button
@@ -154,6 +156,7 @@ export default function ViewCandidatePage() {
             padding: "0 24px",
             fontWeight: "500",
           }}
+          onClick={() => navigate("/import-trainee")}
         >
           Import
         </Button>
@@ -177,36 +180,6 @@ export default function ViewCandidatePage() {
           />
         </Spin>
       </div>
-
-      {/* Custom Scrollbar */}
-      <style>
-        {`
-          ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-          }
-          ::-webkit-scrollbar-thumb {
-            background-color: #6C63FF;
-            border-radius: 4px;
-          }
-          ::-webkit-scrollbar-thumb:hover {
-            background-color: #8C82FF;
-          }
-          ::-webkit-scrollbar-track {
-            background-color: #EDEBFF;
-          }
-
-          .ant-table-thead > tr > th {
-            background-color: #F4F2FF !important;
-            color: #3E2F96 !important;
-            font-weight: 600;
-          }
-
-          .ant-table-cell {
-            padding: 12px 16px !important;
-          }
-        `}
-      </style>
     </div>
   );
 }

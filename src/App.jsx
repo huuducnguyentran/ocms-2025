@@ -3,8 +3,8 @@ import { Routes, Route, Navigate } from "react-router";
 import Layout from "./components/Layout";
 import HomePage from "./page/Home/HomePage";
 import ProfilePage from "./page/Home/ProfilePage";
-import EditProfilePage from "./page/Home/EditProfilePage"; 
-import ChangePasswordPage from "./page/Home/ChangePasswordPage"; 
+import EditProfilePage from "./page/Home/EditProfilePage";
+import ChangePasswordPage from "./page/Home/ChangePasswordPage";
 import ImportTraineePage from "./page/Trainee/ImportTraineePage";
 import VerifyCertificatePage from "./page/Certificate/PublicCertificatePage";
 import LoginPage from "./page/Login/LoginPage";
@@ -21,6 +21,9 @@ import CoursePage from './page/Course/CoursePage';
 import CourseDetailsPage from './page/Course/CourseDetailsPage';
 import ClassPage from './page/Class/ClassPage';
 import CourseSubjectSpecialtyPage from './page/CourseSubjectSpecialty/CourseSubjectSpecialtyPage';
+import TraineeDetailPage from "./page/Trainee/TraineeDetail";
+import ExternalCertificateDetailPage from "./page/Trainee/ExternalCertificatePage";
+import TrainingPlanPage from "./page/TrainingPlan/PlanPage";
 
 function App() {
   return (
@@ -43,7 +46,7 @@ function App() {
       >
         <Route index element={<HomePage />} />
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="edit-profile" element={<EditProfilePage />} />  
+        <Route path="edit-profile" element={<EditProfilePage />} />
         <Route path="change-password" element={<ChangePasswordPage />} />
         <Route path="trainees-import" element={<ImportTraineePage />} />
         <Route path="trainees-view" element={<ViewTraineePage />} />
@@ -55,8 +58,13 @@ function App() {
         <Route path="course/:courseId" element={<CourseDetailsPage />} />
         <Route path="class" element={<ClassPage />} />
         <Route path="course-subject-specialty" element={<CourseSubjectSpecialtyPage />} />
-      </Route>  
-      
+        <Route path="/trainee/:id" element={<TraineeDetailPage />} />
+        <Route path="/plan" element={<TrainingPlanPage />} />
+        <Route
+          path="/external-certificate/:id"
+          element={<ExternalCertificateDetailPage />}
+        />
+      </Route>
       {/* Redirect any unknown routes to login */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
