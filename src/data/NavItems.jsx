@@ -14,6 +14,7 @@ const navItems = [
       { key: "4-2", label: "Trainee Courses", path: "/assigned-trainee-courses" },
     ],
   },
+  { key: "5", label: "Course specialty Specialty", icon: "BookOutlined", path: "/course-subject-specialty" },
   { key: "6", label: "Subject", icon: "ReadOutlined", path: "/subject" },
   { key: "24", label: "Subject Specialty", icon: "FileProtectOutlined", path: "/subject-specialty" },
   { key: "5", label: "Instructor Assignment", icon: "BookOutlined", path: "/instructor-assignment" },
@@ -68,7 +69,6 @@ const navItems = [
     key: "17",
     label: "Accounts",
     icon: "TeamOutlined",
-    path: "/accounts",
     children: [
       { key: "17-1", label: "View Accounts", path: "/accounts" },
       { key: "17-2", label: "Create Account", path: "/create-account" },
@@ -78,7 +78,6 @@ const navItems = [
     key: "18",
     label: "trainees",
     icon: "SolutionOutlined",
-    path: "/trainees",
     children: [
       { key: "18-1", label: "View trainees", path: "/trainees-view" },
       { key: "18-2", label: "Import trainees", path: "/trainees-import" },
