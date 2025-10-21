@@ -37,26 +37,14 @@ export const profileService = {
     }
   },
 
-  //  Upload avatar
-//   uploadAvatar: async (file) => {
-//     try {
-//       const formData = new FormData();
-//       formData.append('file', file);
-
-//       const response = await axiosInstance.put(USER_URLS.UPLOAD_AVATAR, formData);
-//       return response.data;
-//     } catch (error) {
-//       throw error;
-//     }
-//   },
 // Upload avatar - with logging
 uploadAvatar: async (file) => {
-  try {
+  try { 
     console.log('📦 profileService.uploadAvatar called');
     console.log('File object:', file);
     
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file); 
     
     console.log('FormData created, appended file with key: "file"');
     console.log('Making PUT request to:', USER_URLS.UPLOAD_AVATAR);
