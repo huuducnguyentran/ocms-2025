@@ -2,18 +2,17 @@
 import { useState } from "react";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { loginService } from "../../service/loginServices";
-import { useLocation } from "react-router";
+import airplaneImg from "../../assets/may-bay-2.jpeg"
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-
-
-const location = useLocation();  // Add this line
+  const location = useLocation();
+  
   const handleLogin = async (values) => {
     setLoading(true);
     try {
@@ -23,24 +22,20 @@ const location = useLocation();  // Add this line
       );
 
       if (response.token) {
-        // ✅ Save login data
         sessionStorage.setItem("token", response.token);
         sessionStorage.setItem("username", values.username);
         sessionStorage.setItem("userId", response.userId);
 
-        // ✅ Save the first role from the "roles" array (if exists)
         if (response.roles && response.roles.length > 0) {
           sessionStorage.setItem("role", response.roles[0]);
         }
 
-        // ✅ (Optional) save hub URL if needed later
         if (response.hubUrl) {
           sessionStorage.setItem("hubUrl", response.hubUrl);
         }
 
         messageApi.success("Login successful!");
 
-        // ✅ Redirect to previous page or home
         const from = location.state?.from?.pathname || "/";
         setTimeout(() => {
           navigate(from, { replace: true });
@@ -60,112 +55,283 @@ const location = useLocation();  // Add this line
     }
   };
 
-const handleForgotPassword = () => {
-  navigate('/forgot-password');  // Navigate to forgot password page
-};
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600">
+    <div style={{
+      position: 'fixed',
+      minHeight: '100vh',
+      background: `url(${airplaneImg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '40px',
+      overflow: 'hidden',
+      width: '100vw',
+      height: '100vh',
+    }}>
       {contextHolder}
-      <div className="flex w-full max-w-6xl mx-4 shadow-2xl rounded-2xl overflow-hidden">
-        {/* Left side - Login Form */}
-        <div className="w-full md:w-1/2 bg-white p-12">
-          <div className="max-w-md mx-auto">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              Welcome Back!
-            </h1>
-            <p className="text-gray-500 mb-8">
-              Login to continue your learning journey
-            </p>
+      
+      {/* Very light overlay - chỉ làm tối nhẹ */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(to right, rgba(0, 40, 80, 0.15) 0%, rgba(0, 80, 120, 0.05) 100%)',
+        zIndex: 1,
+      }} />
 
-            <Form
-              form={form}
-              name="login"
-              onFinish={handleLogin}
-              layout="vertical"
-              requiredMark={false}
+      {/* Login Form Card with Glass Effect - TRONG SUỐT HƠN */}
+      <div style={{
+        position: 'relative',
+        zIndex: 2,
+        width: '100%',
+        maxWidth: '480px',
+        marginRight: '80px',
+        background: 'rgba(255, 255, 255, 0.1)',  // 
+        backdropFilter: 'blur(25px)',  // ✅ Tăng blur để text rõ hơn
+        WebkitBackdropFilter: 'blur(25px)',
+        borderRadius: '24px',
+        padding: '50px 40px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 1px rgba(255, 255, 255, 0.5), inset 0 0 60px rgba(255, 255, 255, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.4)',
+      }}>
+        {/* Logo */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '40px',
+        }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '20px',
+          }}>
+            {/* Wings Icon */}
+            <svg width="180" height="70" viewBox="0 0 200 80" style={{ opacity: 0.9 }}>
+              {/* Left wing */}
+              <path 
+                d="M 10 40 Q 40 20, 80 35 L 85 45 Q 45 35, 15 50 Z" 
+                fill="#333"
+                opacity="0.8"
+              />
+              {/* Right wing */}
+              <path 
+                d="M 190 40 Q 160 20, 120 35 L 115 45 Q 155 35, 185 50 Z" 
+                fill="#333"
+                opacity="0.8"
+              />
+              {/* Center circle */}
+              <circle cx="100" cy="40" r="15" fill="#222" />
+              <text 
+                x="100" 
+                y="46" 
+                textAnchor="middle" 
+                fill="white" 
+                fontSize="16" 
+                fontWeight="bold"
+              >
+                VJ
+              </text>
+            </svg>
+          </div>
+          
+          <h2 style={{
+            fontSize: '20px',
+            fontWeight: '700',
+            color: '#1a1a1a',
+            margin: '0 0 8px 0',
+            letterSpacing: '3px',
+            textShadow: '0 2px 4px rgba(255, 255, 255, 0.8)',
+          }}>
+            VJ ACADEMY
+          </h2>
+          <p style={{
+            fontSize: '11px',
+            color: '#333',
+            margin: 0,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+          }}>
+            ONLINE CERTIFICATE MANAGEMENT SYSTEM
+          </p>
+        </div>
+
+        {/* Member Login Title */}
+        <h3 style={{
+          fontSize: '24px',
+          fontWeight: '400',
+          color: '#222',
+          textAlign: 'center',
+          marginBottom: '35px',
+          textShadow: '0 2px 4px rgba(255, 255, 255, 0.8)',
+        }}>
+          Member Login
+        </h3>
+
+        {/* Login Form */}
+        <Form
+          form={form}
+          name="login"
+          onFinish={handleLogin}
+          layout="vertical"
+          requiredMark={false}
+        >
+          <Form.Item
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: 'Please enter your username',
+              },
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined style={{ color: '#555', fontSize: '16px' }} />}
+              placeholder="user"
+              size="large"
+              style={{
+                borderRadius: '10px',
+                border: '2px solid rgba(0, 188, 212, 0.3)',
+                padding: '14px 16px',
+                fontSize: '15px',
+                background: 'rgba(255, 255, 255, 0.7)',  // ✅ Input cũng trong suốt hơn
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please enter your password",
+              },
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined style={{ color: '#555', fontSize: '16px' }} />}
+              placeholder="password"
+              size="large"
+              style={{
+                borderRadius: '10px',
+                border: '2px solid rgba(0, 188, 212, 0.3)',
+                padding: '14px 16px',
+                fontSize: '15px',
+                background: 'rgba(255, 255, 255, 0.7)',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item style={{ marginBottom: '25px', marginTop: '30px' }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              style={{
+                width: '100%',
+                height: '52px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
+                border: 'none',
+                fontSize: '17px',
+                fontWeight: '600',
+                boxShadow: '0 6px 20px rgba(0, 188, 212, 0.5)',
+                transition: 'all 0.3s ease',
+                letterSpacing: '0.5px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 188, 212, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 188, 212, 0.5)';
+              }}
             >
-              <Form.Item
-                label={<span className="text-gray-700 font-medium">Username</span>}
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter your Username',
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined className="text-gray-400" />}
-                  placeholder="Enter your username"
-                  size="large"
-                  className="rounded-lg"
-                />
-              </Form.Item>
+              Login
+            </Button>
+          </Form.Item>
 
-              <Form.Item
-                label={
-                  <span className="text-gray-700 font-medium">Password</span>
-                }
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter your password",
-                  },
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="text-gray-400" />}
-                  placeholder="Enter your password"
-                  size="large"
-                  className="rounded-lg"
-                />
-              </Form.Item>
-
-              <div className="text-right mb-6">
-                <Button
-                  type="link"
-                  onClick={handleForgotPassword}
-                  className="text-indigo-600 hover:text-indigo-700 p-0"
-                >
-                  Forgot password?
-                </Button>
-              </div>
-
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  size="large"
-                  className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border-none rounded-lg text-lg font-medium shadow-lg"
-                >
-                  Login
-                </Button>
-              </Form.Item>
-            </Form>
+          {/* Bottom Links */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: '10px',
+          }}>
+            <Button
+              type="link"
+              onClick={handleForgotPassword}
+              style={{
+                color: '#00bcd4',
+                padding: 0,
+                fontSize: '14px',
+                fontStyle: 'italic',
+                fontWeight: '600',
+                textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+              }}
+            >
+              Forgot your password?
+            </Button>
+            <Button
+              type="link"
+              style={{
+                color: '#00bcd4',
+                padding: 0,
+                fontSize: '14px',
+                fontStyle: 'italic',
+                fontWeight: '600',
+                textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+              }}
+            >
+            </Button>
           </div>
-        </div>
-
-        {/* Right side - Branding */}
-        <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 items-center justify-center p-12 relative overflow-hidden">
-          {/* Decorative circles */}
-          <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-
-          <div className="relative z-10 text-center text-white">
-            <div className="mb-8 inline-flex items-center justify-center w-24 h-24 bg-white rounded-3xl shadow-xl">
-              <span className="text-5xl font-bold text-indigo-600">VJ</span>
-            </div>
-
-            <h2 className="text-5xl font-bold mb-4">VJ Academy</h2>
-            <p className="text-xl text-white/90 italic">
-              Dream - Learn - Achieve
-            </p>
-          </div>
-        </div>
+        </Form>
       </div>
+
+      {/* Custom Styles */}
+      <style>{`
+        .ant-input:focus,
+        .ant-input-password:focus,
+        .ant-input-affix-wrapper:focus,
+        .ant-input-affix-wrapper-focused {
+          border-color: #00bcd4 !important;
+          box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2) !important;
+          background: rgba(255, 255, 255, 0.85) !important;
+        }
+
+        .ant-input-affix-wrapper:hover {
+          border-color: #00bcd4 !important;
+          background: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .ant-input::placeholder,
+        .ant-input-password::placeholder {
+          color: #777 !important;
+          font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+          div[style*="maxWidth: '480px'"] {
+            margin-right: 0 !important;
+            max-width: 90% !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
