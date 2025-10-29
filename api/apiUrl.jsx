@@ -22,4 +22,10 @@ export const USER_URLS = {
 export const PLAN_URLS = {
   GET_ALL_PLANS: "/api/Plan/all",
   GET_PLAN_BY_ID: "/api/Plan",
+  GET_PLAN_WITH_COURSE_BY_ID: "/api/Plan",
+};
+
+export const COURSE_URLS = {
+  GET_ALL_COURSE: "/Course/all",
+  GET_COURSE_BY_ID: "/Course",
 };
