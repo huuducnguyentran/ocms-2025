@@ -12,6 +12,15 @@ import ForgotPasswordPage from "./page/Login/ForgotPasswordPage";
 import ResetPasswordPage from "./page/Login/ResetPasswordPage";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import ViewTraineePage from "./page/Trainee/ViewTraineePage";
+import AccountPage from './page/Account/AccountPage';
+import SpecialtyPage from './page/Specialty/SpecialtyPage';
+import InstructorAssPage from './page/InstructorAss/InstructorAssPage';
+import SubjectPage from './page/Subject/SubjectPage';
+import SubjectDetailsPage from './page/Subject/SubjectDetailsPage';
+import CoursePage from './page/Course/CoursePage';
+import CourseDetailsPage from './page/Course/CourseDetailsPage';
+import ClassPage from './page/Class/ClassPage';
+import CourseSubjectSpecialtyPage from './page/CourseSubjectSpecialty/CourseSubjectSpecialtyPage';
 import TraineeDetailPage from "./page/Trainee/TraineeDetail";
 import ExternalCertificateDetailPage from "./page/Trainee/ExternalCertificatePage";
 import TrainingPlanPage from "./page/TrainingPlan/PlanPage";
@@ -24,7 +33,8 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/verify" element={<VerifyCertificatePage />} />
-
+      <Route path="/accounts" element={<AccountPage />} />
+      
       {/* Protected routes */}
       <Route
         path="/"
@@ -40,6 +50,14 @@ function App() {
         <Route path="change-password" element={<ChangePasswordPage />} />
         <Route path="trainees-import" element={<ImportTraineePage />} />
         <Route path="trainees-view" element={<ViewTraineePage />} />
+        <Route path="specialty" element={<SpecialtyPage />} />
+        <Route path="instructor-assignment" element={<InstructorAssPage />} />
+        <Route path="subject" element={<SubjectPage />} />
+        <Route path="subject/:subjectId" element={<SubjectDetailsPage />} />
+        <Route path="all-courses" element={<CoursePage />} />
+        <Route path="course/:courseId" element={<CourseDetailsPage />} />
+        <Route path="class" element={<ClassPage />} />
+        <Route path="course-subject-specialty" element={<CourseSubjectSpecialtyPage />} />
         <Route path="/trainee/:id" element={<TraineeDetailPage />} />
         <Route path="/plan" element={<TrainingPlanPage />} />
         <Route
