@@ -24,6 +24,9 @@ import CourseSubjectSpecialtyPage from './page/CourseSubjectSpecialty/CourseSubj
 import TraineeDetailPage from "./page/Trainee/TraineeDetail";
 import ExternalCertificateDetailPage from "./page/Trainee/ExternalCertificatePage";
 import TrainingPlanPage from "./page/TrainingPlan/PlanPage";
+import NotificationPage from "./page/Notifications/NotificationPage";
+import RequestPage from "./page/Request/RequestPage";
+
 
 function App() {
   return (
@@ -64,6 +67,8 @@ function App() {
           path="/external-certificate/:id"
           element={<ExternalCertificateDetailPage />}
         />
+        <Route path="notifications" element={<NotificationPage />} />
+        <Route path="request" element={<RequestPage />} />
       </Route>
       {/* Redirect any unknown routes to login */}
       <Route path="*" element={<Navigate to="/login" replace />} />

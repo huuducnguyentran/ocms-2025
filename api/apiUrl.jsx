@@ -99,3 +99,28 @@ export const COURSE_SUBJECT_SPECIALTY_URLS = {
   REQUEST_NEW: '/CourseSubjectSpecialty',  // /{specialtyId}/{subjectId}/{courseId}/request/new
   REQUEST_MODIFY: '/CourseSubjectSpecialty',  // /{specialtyId}/{subjectId}/{courseId}/request/modify
 };
+
+// Thêm vào cuối file api/apiUrl.jsx
+export const TRAINEE_ASSIGNATION_URLS = {
+  CREATE: '/TraineeAssignation',           // POST
+  GET_BY_ID: '/TraineeAssignation',        // GET /{id}
+  UPDATE: '/TraineeAssignation',           // PUT /{id}
+  DELETE: '/TraineeAssignation',           // DELETE /{id}
+  GET_BY_CLASS: '/TraineeAssignation/class', // GET /class/{classId}
+};
+
+// Thêm Notification URLs
+export const NOTIFICATION_URLS = {
+  GET_ALL: '/Notification/all',                    // GET - Get all notifications for current user
+  MARK_READ: '/Notification',                      // PUT /{notificationId}/mark-read
+  CREATE: '/Notification',                         // POST - Create notification (Admin only)
+  TEST_ADMIN: '/Notification/test-admin-notification', // POST - Test notification to all admins
+};
+
+// Request URLs
+export const REQUEST_URLS = {
+  GET_ALL: '/api/Request/all',                    // GET - Get all requests (Admin & Education Officer only)
+  CREATE: '/api/Request',                         // POST /{entityId}/{requestType} - Create request
+  APPROVE: '/api/Request',                        // POST /{requestId}/approve - Approve request
+  REJECT: '/api/Request',                         // POST /{requestId}/reject - Reject request
+};
