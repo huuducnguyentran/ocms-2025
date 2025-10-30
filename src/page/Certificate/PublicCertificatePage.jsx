@@ -39,13 +39,17 @@ export default function VerifyCertificatePage() {
         {/* Header */}
         <div className="flex justify-between text-xs mb-4">
           <div>
-            CÔNG TY CỔ PHẦN HÀNG KHÔNG VIETJET<br />
+            CÔNG TY CỔ PHẦN HÀNG KHÔNG VIETJET
+            <br />
             VIETJET AVIATION JOINT STOCK COMPANY
           </div>
           <div className="text-right">
-            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br />
-            Độc lập - Tự do - Hạnh phúc<br />
-            SOCIALIST REPUBLIC OF VIETNAM<br />
+            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+            <br />
+            Độc lập - Tự do - Hạnh phúc
+            <br />
+            SOCIALIST REPUBLIC OF VIETNAM
+            <br />
             Independence-Freedom-Happiness
           </div>
         </div>
@@ -60,8 +64,7 @@ export default function VerifyCertificatePage() {
           <div className="w-36 mr-4">
             <img
               src={
-                data.photoUrl ||
-                "https://via.placeholder.com/150?text=No+Photo"
+                data.photoUrl || "https://via.placeholder.com/150?text=No+Photo"
               }
               alt="Participant"
               className="border border-black w-full"
@@ -80,21 +83,27 @@ export default function VerifyCertificatePage() {
             </strong>
             <br />
             <br />
-            Đã hoàn thành khóa học (Has passed the course of):<br />
+            Đã hoàn thành khóa học (Has passed the course of):
+            <br />
             <strong>{data.courseName || "____________________"}</strong>
             <br />
-            Từ ngày (from): <strong>{data.startDate || "__/__/____"}</strong> đến ngày (to):{" "}
-            <strong>{data.endDate || "__/__/____"}</strong>
+            Từ ngày (from): <strong>
+              {data.startDate || "__/__/____"}
+            </strong>{" "}
+            đến ngày (to): <strong>{data.endDate || "__/__/____"}</strong>
             <br />
-            Kết quả (Result): <strong>{data.result || "____________________"}</strong>
+            Kết quả (Result):{" "}
+            <strong>{data.result || "____________________"}</strong>
           </div>
         </div>
 
         {/* Signature */}
         <div className="text-right mt-8">
           <div className="text-sm mb-2">
-            TP. HCM, ngày {data.issueDate || "__/__/____"}<br />
-            TUQ. TỔNG GIÁM ĐỐC<br />
+            TP. HCM, ngày {data.issueDate || "__/__/____"}
+            <br />
+            TUQ. TỔNG GIÁM ĐỐC
+            <br />
             AUTHORIZED BY CHIEF EXECUTIVE OFFICER
           </div>
           <div className="border border-dashed border-gray-400 w-64 h-16 text-xs text-gray-500 mx-auto flex items-center justify-center">
