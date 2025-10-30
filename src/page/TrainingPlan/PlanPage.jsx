@@ -1,10 +1,12 @@
 // src/pages/TrainingPlanPage.jsx
 import React, { useEffect, useState } from "react";
-import { Card, Spin, Badge, Empty, message, Drawer } from "antd";
+import { Card, Spin, Badge, Empty, message, Drawer, Button } from "antd";
 import {
   getAllPlans,
   getPlanWithCourseById,
 } from "../../service/TrainingPlanService";
+import { PlusOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
 
 /**
  * TrainingPlanPage
@@ -14,6 +16,7 @@ import {
  * Date format: DD/MM/YYYY
  */
 export default function TrainingPlanPage() {
+  const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [detail, setDetail] = useState(null);
@@ -111,12 +114,25 @@ export default function TrainingPlanPage() {
   return (
     <div className="p-6 w-full min-h-[80vh] bg-white">
       {/* Top bread/title */}
+      {/* Top bread/title */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-[#6C63FF]">
+          <h1 className="text-2xl font-semibold text-[#3620AC]">
             Training Plans
           </h1>
         </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate("/create-plan")}
+          style={{
+            backgroundColor: "#ff6200ff",
+            borderColor: "#ff6200ff",
+            color: "white",
+          }}
+        >
+          Create New Plan
+        </Button>
       </div>
 
       <div className="flex gap-6">
@@ -192,7 +208,7 @@ export default function TrainingPlanPage() {
           <div className="bg-[#F5F7FF] rounded-lg p-6 min-h-[70vh]">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h2 className="text-xl font-bold text-[#2B2B6B]">
+                <h2 className="text-xl font-bold text-[#3620AC]">
                   {detail ? detail.planName : "Select a plan"}
                 </h2>
                 <div className="text-sm text-gray-500 mt-1">

@@ -71,3 +71,23 @@ export const getPlanWithCourseById = async (planId) => {
     };
   }
 };
+
+export const createPlan = async (payload) => {
+  try {
+    const token = sessionStorage.getItem("token");
+    const res = await axiosInstance.post(`${PLAN_URLS.CREATE_PLAN}`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error creating plan:", error);
+    return {
+      success: false,
+      message: "Failed to create plan.",
+    };
+  }
+};

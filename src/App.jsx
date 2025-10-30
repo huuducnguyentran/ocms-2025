@@ -12,18 +12,19 @@ import ForgotPasswordPage from "./page/Login/ForgotPasswordPage";
 import ResetPasswordPage from "./page/Login/ResetPasswordPage";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import ViewTraineePage from "./page/Trainee/ViewTraineePage";
-import AccountPage from './page/Account/AccountPage';
-import SpecialtyPage from './page/Specialty/SpecialtyPage';
-import InstructorAssPage from './page/InstructorAss/InstructorAssPage';
-import SubjectPage from './page/Subject/SubjectPage';
-import SubjectDetailsPage from './page/Subject/SubjectDetailsPage';
-import CoursePage from './page/Course/CoursePage';
-import CourseDetailsPage from './page/Course/CourseDetailsPage';
-import ClassPage from './page/Class/ClassPage';
-import CourseSubjectSpecialtyPage from './page/CourseSubjectSpecialty/CourseSubjectSpecialtyPage';
+import AccountPage from "./page/Account/AccountPage";
+import SpecialtyPage from "./page/Specialty/SpecialtyPage";
+import InstructorAssPage from "./page/InstructorAss/InstructorAssPage";
+import SubjectPage from "./page/Subject/SubjectPage";
+import SubjectDetailsPage from "./page/Subject/SubjectDetailsPage";
+import CoursePage from "./page/Course/CoursePage";
+import CourseDetailsPage from "./page/Course/CourseDetailsPage";
+import ClassPage from "./page/Class/ClassPage";
+import CourseSubjectSpecialtyPage from "./page/CourseSubjectSpecialty/CourseSubjectSpecialtyPage";
 import TraineeDetailPage from "./page/Trainee/TraineeDetail";
 import ExternalCertificateDetailPage from "./page/Trainee/ExternalCertificatePage";
 import TrainingPlanPage from "./page/TrainingPlan/PlanPage";
+import CreatePlanPage from "./page/TrainingPlan/CreatePlanPage";
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/verify" element={<VerifyCertificatePage />} />
       <Route path="/accounts" element={<AccountPage />} />
-      
+
       {/* Protected routes */}
       <Route
         path="/"
@@ -57,9 +58,13 @@ function App() {
         <Route path="all-courses" element={<CoursePage />} />
         <Route path="course/:courseId" element={<CourseDetailsPage />} />
         <Route path="class" element={<ClassPage />} />
-        <Route path="course-subject-specialty" element={<CourseSubjectSpecialtyPage />} />
+        <Route
+          path="course-subject-specialty"
+          element={<CourseSubjectSpecialtyPage />}
+        />
         <Route path="/trainee/:id" element={<TraineeDetailPage />} />
         <Route path="/plan" element={<TrainingPlanPage />} />
+        <Route path="/create-plan" element={<CreatePlanPage />} />
         <Route
           path="/external-certificate/:id"
           element={<ExternalCertificateDetailPage />}

@@ -23,7 +23,12 @@ const navItems = [
       },
     ],
   },
-  { key: "5", label: "Course specialty Specialty", icon: "BookOutlined", path: "/course-subject-specialty" },
+  {
+    key: "5",
+    label: "Course specialty Specialty",
+    icon: "BookOutlined",
+    path: "/course-subject-specialty",
+  },
   { key: "6", label: "Subject", icon: "ReadOutlined", path: "/subject" },
   {
     key: "24",
@@ -32,13 +37,7 @@ const navItems = [
     path: "/subject-specialty",
   },
   {
-    key: "5",
-    label: "Instructor Assignment",
-    icon: "BookOutlined",
-    path: "/instructor-assignment",
-  },
-  {
-    key: "23",
+    key: "25",
     label: "Classroom",
     icon: "FileProtectOutlined",
     path: "/class",
