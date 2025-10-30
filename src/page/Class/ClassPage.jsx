@@ -13,6 +13,8 @@ import {
   Tag,
   DatePicker,
   Select,
+  Spin,
+  Empty,
 } from 'antd';
 import { 
   PlusOutlined, 
@@ -23,8 +25,12 @@ import {
   TeamOutlined,
   BookOutlined,
   EyeOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
-import { classService, classGroupService } from '../../service/classServices';
+import { classService, classGroupService, traineeAssignationService } from '../../service/classServices';
+import { getAllTrainees } from '../../service/TraineeService';
 import dayjs from 'dayjs';
 
 const { TabPane } = Tabs;
@@ -53,6 +59,19 @@ const ClassPage = () => {
   const [classGroupClasses, setClassGroupClasses] = useState([]);
   const [isClassesModalVisible, setIsClassesModalVisible] = useState(false);
   const [classesModalLoading, setClassesModalLoading] = useState(false);
+
+  // TraineeAssignation States
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [traineeAssignations, setTraineeAssignations] = useState([]);
+  const [isTraineeModalVisible, setIsTraineeModalVisible] = useState(false);
+  const [traineeModalLoading, setTraineeModalLoading] = useState(false);
+  const [availableTrainees, setAvailableTrainees] = useState([]);
+  const [isAddTraineeModalVisible, setIsAddTraineeModalVisible] = useState(false);
+  const [addTraineeForm] = Form.useForm();
+
+  // Thêm state để lưu trainees của từng class khi expand
+  const [expandedClassTrainees, setExpandedClassTrainees] = useState({});
+  const [loadingTraineesForClass, setLoadingTraineesForClass] = useState({});
 
   const userRole = sessionStorage.getItem('role');
   const canEdit = userRole === 'Education Officer';
@@ -345,6 +364,188 @@ const ClassPage = () => {
     }
   };
 
+  // ============= TraineeAssignation Functions =============
+  
+  // View trainees assigned to a class
+  const handleViewClassTrainees = async (classRecord) => {
+    setSelectedClass(classRecord);
+    setIsTraineeModalVisible(true);
+    setTraineeModalLoading(true);
+    
+    try {
+      const response = await traineeAssignationService.getByClassId(classRecord.classId);
+      if (response.success) {
+        setTraineeAssignations(response.data || []);
+      } else {
+        message.error('Failed to load trainees');
+        setTraineeAssignations([]);
+      }
+    } catch (error) {
+      console.error('Error fetching trainee assignations:', error);
+      message.error('Failed to fetch trainees');
+      setTraineeAssignations([]);
+    } finally {
+      setTraineeModalLoading(false);
+    }
+  };
+
+  // Open modal to add trainee to class
+  const handleAddTraineeToClass = async (classRecord) => {
+    if (!canEdit) {
+      message.warning('Only Education Officers can assign trainees');
+      return;
+    }
+
+    setSelectedClass(classRecord);
+    setIsAddTraineeModalVisible(true);
+    
+    try {
+      // Fetch all available trainees
+      const response = await getAllTrainees();
+      if (response.success) {
+        setAvailableTrainees(response.data || []);
+      } else {
+        message.error('Failed to load trainees');
+      }
+    } catch (error) {
+      console.error('Error fetching trainees:', error);
+      message.error('Failed to fetch trainees');
+    }
+  };
+
+  // Submit new trainee assignation
+  const handleAddTraineeModalOk = async () => {
+    try {
+      const values = await addTraineeForm.validateFields();
+      
+      const assignationData = {
+        traineeId: values.traineeId,
+        classId: selectedClass.classId,
+      };
+
+      const response = await traineeAssignationService.createAssignation(assignationData);
+      if (response.success) {
+        message.success('Trainee assigned to class successfully');
+        setIsAddTraineeModalVisible(false);
+        addTraineeForm.resetFields();
+        
+        // Refresh trainee list if the trainee modal is open
+        if (isTraineeModalVisible) {
+          handleViewClassTrainees(selectedClass);
+        }
+      } else {
+        message.error(response.message || 'Failed to assign trainee');
+      }
+    } catch (error) {
+      if (error.errorFields) {
+        message.error('Please select a trainee');
+      } else {
+        console.error('Error assigning trainee:', error);
+        message.error('Failed to assign trainee. Please try again.');
+      }
+    }
+  };
+
+  // Delete trainee assignation
+  const handleDeleteTraineeAssignation = async (assignationId) => {
+    if (!canEdit) {
+      message.warning('Only Education Officers can remove trainees');
+      return;
+    }
+
+    Modal.confirm({
+      title: 'Remove Trainee from Class',
+      content: 'Are you sure you want to remove this trainee from the class?',
+      okText: 'Yes, Remove',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          const response = await traineeAssignationService.deleteAssignation(assignationId);
+          if (response.success) {
+            message.success('Trainee removed from class successfully');
+            // Refresh the trainee list
+            handleViewClassTrainees(selectedClass);
+          } else {
+            message.error(response.message || 'Failed to remove trainee');
+          }
+        } catch (error) {
+          console.error('Error removing trainee:', error);
+          message.error('Failed to remove trainee. Please try again.');
+        }
+      },
+    });
+  };
+
+  // ============= Function để load trainees khi expand một Class =============
+  const handleExpandClass = async (expanded, classRecord) => {
+    if (expanded && !expandedClassTrainees[classRecord.classId]) {
+      // Set loading state cho class này
+      setLoadingTraineesForClass(prev => ({ ...prev, [classRecord.classId]: true }));
+      
+      try {
+        const response = await traineeAssignationService.getByClassId(classRecord.classId);
+        if (response.success) {
+          setExpandedClassTrainees(prev => ({
+            ...prev,
+            [classRecord.classId]: response.data || []
+          }));
+        } else {
+          message.error(`Failed to load trainees for class ${classRecord.classId}`);
+          setExpandedClassTrainees(prev => ({
+            ...prev,
+            [classRecord.classId]: []
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching trainees:', error);
+        setExpandedClassTrainees(prev => ({
+          ...prev,
+          [classRecord.classId]: []
+        }));
+      } finally {
+        setLoadingTraineesForClass(prev => ({ ...prev, [classRecord.classId]: false }));
+      }
+    }
+  };
+
+  // Function để xóa trainee từ nested table
+  const handleDeleteTraineeFromExpanded = async (assignationId, classId) => {
+    if (!canEdit) {
+      message.warning('Only Education Officers can remove trainees');
+      return;
+    }
+
+    Modal.confirm({
+      title: 'Remove Trainee from Class',
+      content: 'Are you sure you want to remove this trainee from the class?',
+      okText: 'Yes, Remove',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          const response = await traineeAssignationService.deleteAssignation(assignationId);
+          if (response.success) {
+            message.success('Trainee removed successfully');
+            // Refresh trainees cho class này
+            const refreshResponse = await traineeAssignationService.getByClassId(classId);
+            if (refreshResponse.success) {
+              setExpandedClassTrainees(prev => ({
+                ...prev,
+                [classId]: refreshResponse.data || []
+              }));
+            }
+          } else {
+            message.error(response.message || 'Failed to remove trainee');
+          }
+        } catch (error) {
+          console.error('Error removing trainee:', error);
+          message.error('Failed to remove trainee. Please try again.');
+        }
+      },
+    });
+  };
+
   // ============= Table Columns =============
   const classGroupColumns = [
     {
@@ -467,12 +668,28 @@ const ClassPage = () => {
     {
       title: 'Actions',
       key: 'actions',
-      width: 150,
+      width: 250,
       fixed: 'right',
       render: (_, record) => (
         <Space size="small">
+          <Button
+            type="link"
+            icon={<UsergroupAddOutlined />}
+            onClick={() => handleViewClassTrainees(record)}
+            style={{ padding: 0 }}
+          >
+            View Trainees
+          </Button>
           {canEdit && (
             <>
+              <Button
+                type="link"
+                icon={<UserAddOutlined />}
+                onClick={() => handleAddTraineeToClass(record)}
+                style={{ padding: 0 }}
+              >
+                Add Trainee
+              </Button>
               <Button
                 type="link"
                 icon={<EditOutlined />}
@@ -496,6 +713,143 @@ const ClassPage = () => {
       ),
     },
   ];
+
+  // Trainee Assignation Table Columns
+  const traineeAssignationColumns = [
+    {
+      title: 'Assignation ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 120,
+    },
+    {
+      title: 'Trainee ID',
+      dataIndex: 'traineeId',
+      key: 'traineeId',
+      width: 150,
+    },
+    {
+      title: 'Trainee Name',
+      dataIndex: 'traineeName',
+      key: 'traineeName',
+      width: 200,
+      render: (text) => <span style={{ fontWeight: 500 }}>{text || 'N/A'}</span>,
+    },
+    {
+      title: 'Assigned Date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 150,
+      render: (date) => date ? new Date(date).toLocaleDateString('en-GB') : 'N/A',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 120,
+      render: (_, record) => (
+        canEdit && (
+          <Button
+            type="link"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteTraineeAssignation(record.id)}
+            style={{ padding: 0 }}
+          >
+            Remove
+          </Button>
+        )
+      ),
+    },
+  ];
+
+  // Nested Trainee Table Component
+  const expandedRowRender = (classRecord) => {
+    const trainees = expandedClassTrainees[classRecord.classId] || [];
+    const isLoading = loadingTraineesForClass[classRecord.classId];
+
+    const nestedTraineeColumns = [
+      {
+        title: 'Trainee ID',
+        dataIndex: 'traineeId',
+        key: 'traineeId',
+        width: 150,
+      },
+      {
+        title: 'Trainee Name',
+        dataIndex: 'traineeName',
+        key: 'traineeName',
+        width: 200,
+        render: (text) => <span style={{ fontWeight: 500 }}>{text || 'N/A'}</span>,
+      },
+      {
+        title: 'Assigned Date',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        width: 150,
+        render: (date) => date ? new Date(date).toLocaleDateString('en-GB') : 'N/A',
+      },
+      {
+        title: 'Actions',
+        key: 'actions',
+        width: 120,
+        render: (_, record) => (
+          canEdit && (
+            <Button
+              type="link"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => handleDeleteTraineeFromExpanded(record.id, classRecord.classId)}
+              style={{ padding: 0 }}
+              size="small"
+            >
+              Remove
+            </Button>
+          )
+        ),
+      },
+    ];
+
+    if (isLoading) {
+      return (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <Spin tip="Loading trainees..." />
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ padding: '0 24px 16px 48px' }}>
+        <div style={{ 
+          marginBottom: '12px', 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span style={{ fontWeight: 500, color: '#1890ff' }}>
+            📋 Trainees in this class ({trainees.length})
+          </span>
+          {canEdit && (
+            <Button
+              type="primary"
+              size="small"
+              icon={<UserAddOutlined />}
+              onClick={() => handleAddTraineeToClass(classRecord)}
+            >
+              Add Trainee
+            </Button>
+          )}
+        </div>
+        <Table
+          columns={nestedTraineeColumns}
+          dataSource={trainees}
+          rowKey="id"
+          pagination={false}
+          size="small"
+          locale={{ emptyText: 'No trainees assigned yet' }}
+        />
+      </div>
+    );
+  };
 
   return (
     <div style={{ padding: '24px' }}>
@@ -575,57 +929,6 @@ const ClassPage = () => {
           </TabPane>
 
           {/* Class Tab */}
-          <TabPane 
-            tab={
-              <span>
-                <BookOutlined />
-                Classes
-              </span>
-            } 
-            key="classes"
-          >
-            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
-              <Input
-                placeholder="Search by class ID, subject ID, or instructor..."
-                prefix={<SearchOutlined />}
-                value={classSearchText}
-                onChange={(e) => setClassSearchText(e.target.value)}
-                style={{ width: 400 }}
-                allowClear
-              />
-              <Space>
-                <Button
-                  icon={<ReloadOutlined />}
-                  onClick={fetchAllClasses}
-                  loading={classesLoading}
-                >
-                  Refresh
-                </Button>
-                {canEdit && (
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={handleCreateClass}
-                  >
-                    Add Class
-                  </Button>
-                )}
-              </Space>
-            </div>
-
-            <Table
-              columns={classColumns}
-              dataSource={filteredClasses}
-              rowKey="classId"
-              loading={classesLoading}
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                showTotal: (total) => `Total ${total} classes`,
-              }}
-              scroll={{ x: 1200 }}
-            />
-          </TabPane>
         </Tabs>
       </Card>
 
@@ -732,29 +1035,156 @@ const ClassPage = () => {
         </Form>
       </Modal>
 
-      {/* View ClassGroup Classes Modal */}
+      {/* View ClassGroup Classes Modal - WITH EXPANDABLE TRAINEES */}
       <Modal
-        title={`Classes in ${selectedClassGroup?.name || 'Class Group'}`}
+        title={
+          <span>
+            <TeamOutlined style={{ marginRight: 8 }} />
+            Classes in {selectedClassGroup?.name || 'Class Group'}
+          </span>
+        }
         open={isClassesModalVisible}
-        onCancel={() => setIsClassesModalVisible(false)}
+        onCancel={() => {
+          setIsClassesModalVisible(false);
+          // Clear expanded trainees khi đóng modal
+          setExpandedClassTrainees({});
+          setLoadingTraineesForClass({});
+        }}
         footer={[
-          <Button key="close" onClick={() => setIsClassesModalVisible(false)}>
+          <Button key="close" onClick={() => {
+            setIsClassesModalVisible(false);
+            setExpandedClassTrainees({});
+            setLoadingTraineesForClass({});
+          }}>
             Close
           </Button>,
         ]}
-        width={900}
+        width={1200}
       >
         <Table
-          columns={classColumns.filter(col => col.key !== 'actions')}
+          columns={classColumns.filter(col => col.key !== 'actions' && col.key !== 'classGroupId')}
           dataSource={classGroupClasses}
           rowKey="classId"
           loading={classesModalLoading}
+          expandable={{
+            expandedRowRender,
+            onExpand: handleExpandClass,
+            expandIcon: ({ expanded, onExpand, record }) => (
+              <Button
+                type="text"
+                size="small"
+                icon={<DownOutlined rotate={expanded ? 180 : 0} />}
+                onClick={e => onExpand(record, e)}
+                style={{ 
+                  transition: 'all 0.3s',
+                  color: '#1890ff'
+                }}
+              />
+            ),
+          }}
           pagination={{
             pageSize: 5,
             showTotal: (total) => `Total ${total} classes`,
           }}
           locale={{ emptyText: 'No classes in this group yet' }}
         />
+      </Modal>
+
+      {/* View Trainees Modal */}
+      <Modal
+        title={
+          <span>
+            <UsergroupAddOutlined style={{ marginRight: 8 }} />
+            Trainees in Class {selectedClass?.classId}
+          </span>
+        }
+        open={isTraineeModalVisible}
+        onCancel={() => setIsTraineeModalVisible(false)}
+        footer={[
+          <Button 
+            key="add" 
+            type="primary" 
+            icon={<UserAddOutlined />}
+            onClick={() => {
+              setIsTraineeModalVisible(false);
+              handleAddTraineeToClass(selectedClass);
+            }}
+            disabled={!canEdit}
+          >
+            Add Trainee
+          </Button>,
+          <Button key="close" onClick={() => setIsTraineeModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+        width={900}
+      >
+        <Table
+          columns={traineeAssignationColumns}
+          dataSource={traineeAssignations}
+          rowKey="id"
+          loading={traineeModalLoading}
+          pagination={{
+            pageSize: 5,
+            showTotal: (total) => `Total ${total} trainees`,
+          }}
+          locale={{ emptyText: 'No trainees assigned to this class yet' }}
+        />
+      </Modal>
+
+      {/* Add Trainee to Class Modal */}
+      <Modal
+        title={
+          <span>
+            <UserAddOutlined style={{ marginRight: 8 }} />
+            Assign Trainee to Class {selectedClass?.classId}
+          </span>
+        }
+        open={isAddTraineeModalVisible}
+        onOk={handleAddTraineeModalOk}
+        onCancel={() => {
+          setIsAddTraineeModalVisible(false);
+          addTraineeForm.resetFields();
+        }}
+        okText="Assign"
+        width={600}
+      >
+        <Form
+          form={addTraineeForm}
+          layout="vertical"
+          name="addTraineeForm"
+        >
+          <Form.Item
+            name="traineeId"
+            label="Select Trainee"
+            rules={[{ required: true, message: 'Please select a trainee' }]}
+          >
+            <Select
+              placeholder="Select a trainee to assign"
+              showSearch
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={availableTrainees.map(trainee => ({
+                value: trainee.userId,
+                label: `${trainee.userId} - ${trainee.fullName}`,
+              }))}
+            />
+          </Form.Item>
+          
+          <div style={{ 
+            padding: '12px', 
+            background: '#f0f2f5', 
+            borderRadius: '4px',
+            marginTop: '12px'
+          }}>
+            <p style={{ margin: 0, fontSize: '13px' }}>
+              <strong>Class:</strong> {selectedClass?.classId}<br />
+              <strong>Subject:</strong> {selectedClass?.subjectId}<br />
+              <strong>Instructor:</strong> {selectedClass?.instructorName}
+            </p>
+          </div>
+        </Form>
       </Modal>
     </div>
   );

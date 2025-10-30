@@ -1,6 +1,6 @@
 // src/service/classServices.jsx
 import axiosInstance from '../../utils/axiosInstance';
-import { CLASS_URLS, CLASSGROUP_URLS } from '../../api/apiUrl';
+import { CLASS_URLS, CLASSGROUP_URLS, TRAINEE_ASSIGNATION_URLS } from '../../api/apiUrl';
 
 // Class Services
 export const classService = {
@@ -129,5 +129,66 @@ export const classGroupService = {
   },
 };
 
-export default { classService, classGroupService };
+// TraineeAssignation Services
+export const traineeAssignationService = {
+  // Get all trainee assignations for a specific class
+  getByClassId: async (classId) => {
+    try {
+      const response = await axiosInstance.get(`${TRAINEE_ASSIGNATION_URLS.GET_BY_CLASS}/${classId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching trainee assignations by class:', error);
+      throw error;
+    }
+  },
+
+  // Get trainee assignation by ID
+  getById: async (assignationId) => {
+    try {
+      const response = await axiosInstance.get(`${TRAINEE_ASSIGNATION_URLS.GET_BY_ID}/${assignationId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching trainee assignation by ID:', error);
+      throw error;
+    }
+  },
+
+  // Create a new trainee assignation
+  createAssignation: async (assignationData) => {
+    try {
+      const response = await axiosInstance.post(TRAINEE_ASSIGNATION_URLS.CREATE, assignationData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating trainee assignation:', error);
+      throw error;
+    }
+  },
+
+  // Update trainee assignation
+  updateAssignation: async (assignationId, assignationData) => {
+    try {
+      const response = await axiosInstance.put(
+        `${TRAINEE_ASSIGNATION_URLS.UPDATE}/${assignationId}`, 
+        assignationData
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating trainee assignation:', error);
+      throw error;
+    }
+  },
+
+  // Delete trainee assignation
+  deleteAssignation: async (assignationId) => {
+    try {
+      const response = await axiosInstance.delete(`${TRAINEE_ASSIGNATION_URLS.DELETE}/${assignationId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting trainee assignation:', error);
+      throw error;
+    }
+  },
+};
+
+export default { classService, classGroupService, traineeAssignationService };
 
