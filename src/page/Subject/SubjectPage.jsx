@@ -1,34 +1,46 @@
 // src/page/Subject/SubjectPage.jsx
-import React, { useEffect, useState } from 'react';
-import { Table, Card, message, Button, Space, Input, Modal, Form, Tag, Select } from 'antd';
-import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  Card,
+  message,
+  Button,
+  Space,
+  Input,
+  Modal,
+  Form,
+  Tag,
+  Select,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
   SearchOutlined,
   ReloadOutlined,
   CheckOutlined,
   CloseOutlined,
   FileAddOutlined,
   BookOutlined,
-} from '@ant-design/icons';
-import { subjectService } from '../../service/subjectServices';
-import { useNavigate } from 'react-router-dom';
+} from "@ant-design/icons";
+import { subjectService } from "../../service/subjectServices";
+import { useNavigate } from "react-router";
 
 const SubjectPage = () => {
   const [subjects, setSubjects] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingSubject, setEditingSubject] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState("all");
   const [form] = Form.useForm();
   const [assignations, setAssignations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalLoading, setModalLoading] = useState(false); // Thêm state này
 
-  const userRole = sessionStorage.getItem('role');
-  const canEdit = userRole === 'Education Officer' || userRole === 'Administrator';
+  const userRole = sessionStorage.getItem("role");
+  const canEdit =
+    userRole === "Education Officer" || userRole === "Administrator";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,17 +52,22 @@ const SubjectPage = () => {
     let filtered = subjects;
 
     // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(subject => subject.status === statusFilter);
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((subject) => subject.status === statusFilter);
     }
 
     // Filter by search text
-    if (searchText.trim() !== '') {
-      filtered = filtered.filter(subject => 
-        subject.subjectId?.toLowerCase().includes(searchText.toLowerCase()) ||
-        subject.subjectName?.toLowerCase().includes(searchText.toLowerCase()) ||
-        subject.description?.toLowerCase().includes(searchText.toLowerCase()) ||
-        subject.minTotalScore?.toString().includes(searchText.toLowerCase())
+    if (searchText.trim() !== "") {
+      filtered = filtered.filter(
+        (subject) =>
+          subject.subjectId?.toLowerCase().includes(searchText.toLowerCase()) ||
+          subject.subjectName
+            ?.toLowerCase()
+            .includes(searchText.toLowerCase()) ||
+          subject.description
+            ?.toLowerCase()
+            .includes(searchText.toLowerCase()) ||
+          subject.minTotalScore?.toString().includes(searchText.toLowerCase())
       );
     }
 
@@ -61,19 +78,19 @@ const SubjectPage = () => {
     try {
       setLoading(true);
       const response = await subjectService.getAllSubjects();
-      
+
       if (response.success) {
         setSubjects(response.data || []);
         setFilteredSubjects(response.data || []);
-        message.success('Subjects loaded successfully');
+        message.success("Subjects loaded successfully");
       } else {
-        message.error(response.message || 'Failed to load subjects');
+        message.error(response.message || "Failed to load subjects");
       }
     } catch (error) {
-      console.error('Error fetching subjects:', error);
+      console.error("Error fetching subjects:", error);
       message.error(
-        error.response?.data?.message || 
-        'Failed to fetch subjects. Please try again.'
+        error.response?.data?.message ||
+          "Failed to fetch subjects. Please try again."
       );
     } finally {
       setLoading(false);
@@ -82,7 +99,7 @@ const SubjectPage = () => {
 
   const handleCreate = () => {
     if (!canEdit) {
-      message.warning('You do not have permission to create subjects');
+      message.warning("You do not have permission to create subjects");
       return;
     }
     setEditingSubject(null);
@@ -92,28 +109,28 @@ const SubjectPage = () => {
 
   const handleEdit = async (record) => {
     if (!canEdit) {
-      message.warning('You do not have permission to edit subjects');
+      message.warning("You do not have permission to edit subjects");
       return;
     }
-    
+
     try {
       setModalLoading(true);
       // Gọi API getSubjectById để lấy full details
       const response = await subjectService.getSubjectById(record.subjectId);
-      
+
       if (response.success) {
         const fullDetails = response.data;
         setEditingSubject(fullDetails);
         form.setFieldsValue(fullDetails);
         setIsModalVisible(true);
       } else {
-        message.error(response.message || 'Failed to load subject details');
+        message.error(response.message || "Failed to load subject details");
       }
     } catch (error) {
-      console.error('Error loading subject details:', error);
+      console.error("Error loading subject details:", error);
       message.error(
-        error.response?.data?.message || 
-        'Failed to load subject details. Please try again.'
+        error.response?.data?.message ||
+          "Failed to load subject details. Please try again."
       );
     } finally {
       setModalLoading(false);
@@ -122,30 +139,30 @@ const SubjectPage = () => {
 
   const handleDelete = async (subjectId) => {
     if (!canEdit) {
-      message.warning('You do not have permission to delete subjects');
+      message.warning("You do not have permission to delete subjects");
       return;
     }
 
     Modal.confirm({
-      title: 'Are you sure you want to delete this subject?',
-      content: 'This action cannot be undone.',
-      okText: 'Yes, Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
+      title: "Are you sure you want to delete this subject?",
+      content: "This action cannot be undone.",
+      okText: "Yes, Delete",
+      okType: "danger",
+      cancelText: "Cancel",
       onOk: async () => {
         try {
           const response = await subjectService.deleteSubject(subjectId);
           if (response.success) {
-            message.success('Subject deleted successfully');
+            message.success("Subject deleted successfully");
             fetchAllSubjects();
           } else {
-            message.error(response.message || 'Failed to delete subject');
+            message.error(response.message || "Failed to delete subject");
           }
         } catch (error) {
-          console.error('Error deleting subject:', error);
+          console.error("Error deleting subject:", error);
           message.error(
-            error.response?.data?.message || 
-            'Failed to delete subject. Please try again.'
+            error.response?.data?.message ||
+              "Failed to delete subject. Please try again."
           );
         }
       },
@@ -154,53 +171,53 @@ const SubjectPage = () => {
 
   const handleApprove = async (subjectId) => {
     if (!canEdit) {
-      message.warning('You do not have permission to approve subjects');
+      message.warning("You do not have permission to approve subjects");
       return;
     }
 
     try {
       const response = await subjectService.approveSubject(subjectId);
       if (response.success) {
-        message.success('Subject approved successfully');
+        message.success("Subject approved successfully");
         fetchAllSubjects();
       } else {
-        message.error(response.message || 'Failed to approve subject');
+        message.error(response.message || "Failed to approve subject");
       }
     } catch (error) {
-      console.error('Error approving subject:', error);
+      console.error("Error approving subject:", error);
       message.error(
-        error.response?.data?.message || 
-        'Failed to approve subject. Please try again.'
+        error.response?.data?.message ||
+          "Failed to approve subject. Please try again."
       );
     }
   };
 
   const handleReject = async (subjectId) => {
     if (!canEdit) {
-      message.warning('You do not have permission to reject subjects');
+      message.warning("You do not have permission to reject subjects");
       return;
     }
 
     Modal.confirm({
-      title: 'Are you sure you want to reject this subject?',
-      content: 'This action will mark the subject as rejected.',
-      okText: 'Yes, Reject',
-      okType: 'danger',
-      cancelText: 'Cancel',
+      title: "Are you sure you want to reject this subject?",
+      content: "This action will mark the subject as rejected.",
+      okText: "Yes, Reject",
+      okType: "danger",
+      cancelText: "Cancel",
       onOk: async () => {
         try {
           const response = await subjectService.rejectSubject(subjectId);
           if (response.success) {
-            message.success('Subject rejected successfully');
+            message.success("Subject rejected successfully");
             fetchAllSubjects();
           } else {
-            message.error(response.message || 'Failed to reject subject');
+            message.error(response.message || "Failed to reject subject");
           }
         } catch (error) {
-          console.error('Error rejecting subject:', error);
+          console.error("Error rejecting subject:", error);
           message.error(
-            error.response?.data?.message || 
-            'Failed to reject subject. Please try again.'
+            error.response?.data?.message ||
+              "Failed to reject subject. Please try again."
           );
         }
       },
@@ -210,7 +227,7 @@ const SubjectPage = () => {
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
-      
+
       // Build subject data - chỉ gửi fields có giá trị
       const subjectData = {
         subjectId: values.subjectId,
@@ -219,19 +236,37 @@ const SubjectPage = () => {
       };
 
       // Add optional numeric fields only if they have values
-      if (values.minAttendance !== undefined && values.minAttendance !== null && values.minAttendance !== '') {
+      if (
+        values.minAttendance !== undefined &&
+        values.minAttendance !== null &&
+        values.minAttendance !== ""
+      ) {
         subjectData.minAttendance = parseFloat(values.minAttendance);
       }
-      
-      if (values.minPracticeExamScore !== undefined && values.minPracticeExamScore !== null && values.minPracticeExamScore !== '') {
-        subjectData.minPracticeExamScore = parseFloat(values.minPracticeExamScore);
+
+      if (
+        values.minPracticeExamScore !== undefined &&
+        values.minPracticeExamScore !== null &&
+        values.minPracticeExamScore !== ""
+      ) {
+        subjectData.minPracticeExamScore = parseFloat(
+          values.minPracticeExamScore
+        );
       }
-      
-      if (values.minFinalExamScore !== undefined && values.minFinalExamScore !== null && values.minFinalExamScore !== '') {
+
+      if (
+        values.minFinalExamScore !== undefined &&
+        values.minFinalExamScore !== null &&
+        values.minFinalExamScore !== ""
+      ) {
         subjectData.minFinalExamScore = parseFloat(values.minFinalExamScore);
       }
-      
-      if (values.minTotalScore !== undefined && values.minTotalScore !== null && values.minTotalScore !== '') {
+
+      if (
+        values.minTotalScore !== undefined &&
+        values.minTotalScore !== null &&
+        values.minTotalScore !== ""
+      ) {
         subjectData.minTotalScore = parseFloat(values.minTotalScore);
       }
 
@@ -239,7 +274,7 @@ const SubjectPage = () => {
       if (editingSubject && values.status) {
         subjectData.status = values.status;
       }
-      
+
       if (editingSubject) {
         // Update existing subject
         const response = await subjectService.updateSubject(
@@ -247,31 +282,31 @@ const SubjectPage = () => {
           subjectData
         );
         if (response.success) {
-          message.success('Subject updated successfully');
+          message.success("Subject updated successfully");
           setIsModalVisible(false);
           fetchAllSubjects();
         } else {
-          message.error(response.message || 'Failed to update subject');
+          message.error(response.message || "Failed to update subject");
         }
       } else {
         // Create new subject
         const response = await subjectService.createSubject(subjectData);
         if (response.success) {
-          message.success('Subject created successfully');
+          message.success("Subject created successfully");
           setIsModalVisible(false);
           fetchAllSubjects();
         } else {
-          message.error(response.message || 'Failed to create subject');
+          message.error(response.message || "Failed to create subject");
         }
       }
     } catch (error) {
       if (error.errorFields) {
-        message.error('Please fill in all required fields');
+        message.error("Please fill in all required fields");
       } else {
-        console.error('Error saving subject:', error);
+        console.error("Error saving subject:", error);
         message.error(
-          error.response?.data?.message || 
-          'Failed to save subject. Please try again.'
+          error.response?.data?.message ||
+            "Failed to save subject. Please try again."
         );
       }
     }
@@ -279,14 +314,18 @@ const SubjectPage = () => {
 
   const getStatusTag = (status) => {
     const statusConfig = {
-      'Approved': { color: 'green', icon: <CheckOutlined /> },
-      'Pending': { color: 'orange', icon: <CloseOutlined /> },
-      'Rejected': { color: 'red', icon: <CloseOutlined /> },
-      'Active': { color: 'blue', icon: <CheckOutlined /> },
+      Approved: { color: "green", icon: <CheckOutlined /> },
+      Pending: { color: "orange", icon: <CloseOutlined /> },
+      Rejected: { color: "red", icon: <CloseOutlined /> },
+      Active: { color: "blue", icon: <CheckOutlined /> },
     };
-    
-    const config = statusConfig[status] || { color: 'default' };
-    return <Tag color={config.color} icon={config.icon}>{status}</Tag>;
+
+    const config = statusConfig[status] || { color: "default" };
+    return (
+      <Tag color={config.color} icon={config.icon}>
+        {status}
+      </Tag>
+    );
   };
 
   const handleViewDetails = (subjectId) => {
@@ -295,15 +334,15 @@ const SubjectPage = () => {
 
   const columns = [
     {
-      title: 'Subject ID',
-      dataIndex: 'subjectId',
-      key: 'subjectId',
+      title: "Subject ID",
+      dataIndex: "subjectId",
+      key: "subjectId",
       width: 150,
       render: (text) => (
-        <Tag 
-          color="blue" 
+        <Tag
+          color="blue"
           icon={<BookOutlined />}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
           onClick={() => handleViewDetails(text)}
         >
           {text}
@@ -311,44 +350,45 @@ const SubjectPage = () => {
       ),
     },
     {
-      title: 'Subject Name',
-      dataIndex: 'subjectName',
-      key: 'subjectName',
+      title: "Subject Name",
+      dataIndex: "subjectName",
+      key: "subjectName",
       width: 250,
       render: (text) => <span style={{ fontWeight: 500 }}>{text}</span>,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
       ellipsis: true,
     },
     {
-      title: 'Min Total Score',
-      dataIndex: 'minTotalScore',
-      key: 'minTotalScore',
+      title: "Min Total Score",
+      dataIndex: "minTotalScore",
+      key: "minTotalScore",
       width: 130,
-      align: 'center',
-      render: (value) => value !== null && value !== undefined ? (
-        <Tag color="purple">{value}</Tag>
-      ) : (
-        <span style={{ color: '#999' }}>-</span>
-      ),
+      align: "center",
+      render: (value) =>
+        value !== null && value !== undefined ? (
+          <Tag color="purple">{value}</Tag>
+        ) : (
+          <span style={{ color: "#999" }}>-</span>
+        ),
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       width: 120,
       render: (status) => getStatusTag(status),
     },
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: "24px" }}>
       <Card
         title={
-          <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
+          <span style={{ fontSize: "20px", fontWeight: "bold" }}>
             Subject Management
           </span>
         }
@@ -361,21 +401,30 @@ const SubjectPage = () => {
       >
         {/* Permission Warning */}
         {!canEdit && (
-          <div style={{ 
-            marginBottom: '16px', 
-            padding: '12px', 
-            background: '#fff7e6', 
-            border: '1px solid #ffd591',
-            borderRadius: '4px'
-          }}>
-            <span style={{ color: '#fa8c16' }}>
+          <div
+            style={{
+              marginBottom: "16px",
+              padding: "12px",
+              background: "#fff7e6",
+              border: "1px solid #ffd591",
+              borderRadius: "4px",
+            }}
+          >
+            <span style={{ color: "#fa8c16" }}>
               ⚠️ Only Education Officers and Administrators can manage subjects.
             </span>
           </div>
         )}
 
         {/* Search and Actions Bar */}
-        <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+        <div
+          style={{
+            marginBottom: "16px",
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "16px",
+          }}
+        >
           <Space style={{ flex: 1 }}>
             <Input
               placeholder="Search by ID, name or description..."
@@ -433,37 +482,30 @@ const SubjectPage = () => {
 
       {/* Create/Edit Modal */}
       <Modal
-        title={editingSubject ? 'Edit Subject' : 'Create New Subject'}
+        title={editingSubject ? "Edit Subject" : "Create New Subject"}
         open={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => {
           setIsModalVisible(false);
           form.resetFields();
         }}
-        okText={editingSubject ? 'Update' : 'Create'}
+        okText={editingSubject ? "Update" : "Create"}
         width={600}
         confirmLoading={modalLoading}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          name="subjectForm"
-        >
+        <Form form={form} layout="vertical" name="subjectForm">
           <Form.Item
             name="subjectId"
             label="Subject ID"
-            rules={[{ required: true, message: 'Please enter subject ID' }]}
+            rules={[{ required: true, message: "Please enter subject ID" }]}
           >
-            <Input 
-              placeholder="e.g., CALAR001" 
-              disabled={!!editingSubject}
-            />
+            <Input placeholder="e.g., CALAR001" disabled={!!editingSubject} />
           </Form.Item>
 
           <Form.Item
             name="subjectName"
             label="Subject Name"
-            rules={[{ required: true, message: 'Please enter subject name' }]}
+            rules={[{ required: true, message: "Please enter subject name" }]}
           >
             <Input placeholder="e.g., Civil Air Law and Regulations" />
           </Form.Item>
@@ -471,33 +513,35 @@ const SubjectPage = () => {
           <Form.Item
             name="description"
             label="Description"
-            rules={[{ required: true, message: 'Please enter description' }]}
+            rules={[{ required: true, message: "Please enter description" }]}
           >
-            <Input.TextArea 
-              rows={4} 
-              placeholder="Enter subject description..." 
+            <Input.TextArea
+              rows={4}
+              placeholder="Enter subject description..."
             />
           </Form.Item>
 
           {/* Optional Score Fields */}
-          <div style={{ 
-            padding: '16px', 
-            background: '#f5f5f5', 
-            borderRadius: '8px',
-            marginBottom: '16px' 
-          }}>
-            <p style={{ fontWeight: 500, marginBottom: '12px', color: '#666' }}>
+          <div
+            style={{
+              padding: "16px",
+              background: "#f5f5f5",
+              borderRadius: "8px",
+              marginBottom: "16px",
+            }}
+          >
+            <p style={{ fontWeight: 500, marginBottom: "12px", color: "#666" }}>
               Score Requirements (Optional)
             </p>
-            
+
             <Form.Item
               name="minAttendance"
               label="Minimum Attendance (%)"
               tooltip="Optional: Minimum attendance percentage required (0-100)"
             >
-              <Input 
-                type="number" 
-                placeholder="e.g., 80" 
+              <Input
+                type="number"
+                placeholder="e.g., 80"
                 min={0}
                 max={100}
                 step={1}
@@ -509,9 +553,9 @@ const SubjectPage = () => {
               label="Minimum Practice Exam Score"
               tooltip="Optional: Minimum score for practice exam (0-10)"
             >
-              <Input 
-                type="number" 
-                placeholder="e.g., 6" 
+              <Input
+                type="number"
+                placeholder="e.g., 6"
                 min={0}
                 max={10}
                 step={0.5}
@@ -523,9 +567,9 @@ const SubjectPage = () => {
               label="Minimum Final Exam Score"
               tooltip="Optional: Minimum score for final exam (0-10)"
             >
-              <Input 
-                type="number" 
-                placeholder="e.g., 5" 
+              <Input
+                type="number"
+                placeholder="e.g., 5"
                 min={0}
                 max={10}
                 step={0.5}
@@ -537,9 +581,9 @@ const SubjectPage = () => {
               label="Minimum Total Score"
               tooltip="Optional: Minimum total score required (0-10)"
             >
-              <Input 
-                type="number" 
-                placeholder="e.g., 6" 
+              <Input
+                type="number"
+                placeholder="e.g., 6"
                 min={0}
                 max={10}
                 step={0.5}
@@ -551,7 +595,7 @@ const SubjectPage = () => {
             <Form.Item
               name="status"
               label="Status"
-              rules={[{ required: true, message: 'Please select status' }]}
+              rules={[{ required: true, message: "Please select status" }]}
             >
               <Select placeholder="Select status">
                 <Select.Option value="Approved">Approved</Select.Option>
@@ -561,7 +605,7 @@ const SubjectPage = () => {
               </Select>
             </Form.Item>
           )}
-        </Form> 
+        </Form>
       </Modal>
     </div>
   );
